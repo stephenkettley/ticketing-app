@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const TicketForm = () => {
+  const router = useRouter();
   const handleChange = (event) => {
     const value = event.target.value;
     const name = event.target.name;
@@ -22,8 +24,19 @@ const TicketForm = () => {
     active: false,
   };
 
-  const handleSubmit = () => {
-    console.log("submitted");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const res = await fetch("/api/Tickets", {
+      method: "POST",
+      body: JSON.stringify({ formData }),
+      "content-type": "application/json",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to create a new ticket!");
+    }
+
+    router.push("/");
   };
 
   const [formData, setFormData] = useState(startingTicketData);
